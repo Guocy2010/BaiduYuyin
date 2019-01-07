@@ -1,0 +1,23 @@
+（1）安装Java程序（https://download.java.net/java/GA/jdk11/13/GPL/openjdk-11.0.1_windows-x64_bin.zip），设置JAVA_HOME环境变量（https://www.cnblogs.com/cnwutianhao/p/5487758.html）
+
+（2）编辑公交站牌文件：
+    1_be.txt：1路车的前进路线；
+    1_cf.txt：1路车的返回路线；
+    2_be.txt：2路车的前进路线；
+    2_cf.txt：2路车的返回路线；
+    ……
+    文件名的命名方式为：线路_be.txt（表示前进路线），线路_cf.txt（表示返回路线）；
+    文件内容：每行一个公交站名，公交站牌顺序自上而下依次列出。
+    文件编码（注意，这个很重要，可以通过文本编辑器的文件——另存为——编码进行设置）：utf8
+
+（3）双击BaiduYuyin.bat。即可开始转换语音程序，1路线的语音文件放置line1文件夹，2路线放置在line2文件夹，依此类推。
+
+（4）高级使用，打开命令行窗口（cmd）：
+    公交站牌文件转换为补充文字后的公交站牌文件：
+        -s：指定步骤（2）中的定义的原文件
+        -t：指定一个合成后的临时文件
+        java -Dfile.encoding=utf-8 -jar BaiduYuyin.jar -s 线路_be.txt -t 线路_be_temp.txt
+    补充文字后的公交站牌文件转换为音频文件（mp3）：
+        -t：指定一个合成后的临时文件
+        -d：指定保存MP3的目录
+        java -Dfile.encoding=utf-8 -jar BaiduYuyin.jar -t 线路_be_temp.txt -d line线路
