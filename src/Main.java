@@ -97,9 +97,94 @@ public class Main {
 			}
 		}
 	}
+	
+	public static void printUsage() {
+		System.out.println("Usage:");
+		System.out.println("        java -jar BaiduYuyin.jar [options]\n");
+		System.out.println("Options:");
+		System.out.println("        -h|--help                   print usage information");
+		System.out.println("        -s|--station <file>         station file containing all stations, each line for one station");
+		System.out.println("        -t|--text <file>            text file containing messages transformed from stations, each ");
+		System.out.println("                                    line with one \"xxx_xxx.mp3 : message text\", message text will");
+		System.out.println("                                    be made into audio and stored in directory(-d defines) with ");
+		System.out.println("                                    filename xxx_xxx.mp3");
+		System.out.println("        -d|--directory <directory>  directory to store audio files for mp3 files defined in -t|--text");
+		System.out.println("");
+		System.out.println("Example:");
+		System.out.println("        java -jar BaiduYuyin.jar -s 1_be.txt -t 1_be.temp -d line1");
+		System.out.println("        java -jar BaiduYuyin.jar -s 1_be.txt -t 1_be.temp");
+		System.out.println("        java -jar BaiduYuyin.jar -t 1_be.temp -d line1");
+	}
 
 	public static void main(String[] args) {
 		
+		String station = null;
+		String text = null;
+		String directory = null;
 		
+		// read files from current directory
+		if (args.length <= 0) {
+			processCurrentDir();
+			return;
+		}
+		
+		// process arguments
+		for (int i = 0; i < args.length; i++) {
+			// -h|--help
+			if (args[i].compareToIgnoreCase("-h") == 0 || args[i].compareToIgnoreCase("--help") == 0) {
+				printUsage();
+				return;
+			}
+			
+			// -s|--station
+			if (args[i].compareToIgnoreCase("-s") == 0 || args[i].compareToIgnoreCase("--station") == 0) {
+				if (i + 1 < args.length) {
+					station = args[i + 1];
+				} else {
+					System.out.println("error: options -s|--station should be given a file name");
+					return;
+				}
+			}
+			
+			// -t|--text
+			if (args[i].compareToIgnoreCase("-t") == 0 || args[i].compareToIgnoreCase("--text") == 0) {
+				if (i + 1 < args.length) {
+					text = args[i + 1];
+				} else {
+					System.out.println("error: options -t|--text should be given a file name");
+					return;
+				}
+			}
+			
+			// -d|--directory
+			if (args[i].compareToIgnoreCase("-d") == 0 || args[i].compareToIgnoreCase("--directory") == 0) {
+				if (i + 1 < args.length) {
+					directory = args[i + 1];
+				} else {
+					System.out.println("error: options -d|--directory should be given a directory name");
+					return;
+				}
+			}
+		}
+		
+		if (station != null && text != null) {
+			StationTransformer transformer = new StationTransformer();
+			transformer.readFile(station);
+			transformer.writeFile(text);
+			System.out.println(text + " generated!");
+		}
+		
+		if (text != null && directory != null) {
+			if (!createDir(directory)) {
+				return;
+			}
+			
+			AudioProducer audioProducer = new AudioProducer();
+			List<Pair<String, String>> stationList = readFile(text);
+			for (Pair<String, String> item : stationList) {
+				System.out.println(item.getLeft() + "\t" + item.getRight());
+				audioProducer.produce(directory + File.separator + item.getLeft(), item.getRight());
+			}
+		}
 	}
 }
