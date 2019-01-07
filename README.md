@@ -1,2 +1,2 @@
 # BaiduYuyin
-make text to audio with BaiduYuyin
+Make audio from text with BaiduYuyin.
